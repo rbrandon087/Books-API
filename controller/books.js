@@ -1,6 +1,6 @@
 const express = require('express');
-const router = express.Router();
-const Book = require('../models/book');
+const books = express.Router();
+const Book = require('../models/model');
 
 
 
@@ -43,22 +43,23 @@ books.get('/seed', (req, res) => {
 
 
 // Get all books
-router.get('/', async (req, res) => {
+books.get('/', async (req, res) => {
   try {
-    const books = await Book.find();
-    res.status(200).json(books);
+    console.log("getting books")
+    const booksfound = await Book.find();
+    res.status(200).json(booksfound);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 // Get a specific book by ID
-router.get('/:id', getBook, (req, res) => {
+books.get('/:id', getBook, (req, res) => {
   res.status(200).json(res.book);
 });
 
 // Create a new book
-router.post('/', async (req, res) => {
+books.post('/', async (req, res) => {
   const book = new Book({
     title: req.body.title,
     author: req.body.author,
@@ -74,7 +75,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update a book
-router.put('/:id', getBook, async (req, res) => {
+books.put('/:id', getBook, async (req, res) => {
   if (req.body.title != null) {
     res.book.title = req.body.title;
   }
@@ -96,7 +97,7 @@ router.put('/:id', getBook, async (req, res) => {
 });
 
 // Delete a book
-router.delete('/:id', getBook, async (req, res) => {
+books.delete('/:id', getBook, async (req, res) => {
   try {
     await res.book.remove();
     res.json({ message: 'Book deleted successfully' });
@@ -121,4 +122,4 @@ async function getBook(req, res, next) {
   }
 }
 
-module.exports = router;
+module.exports = books;
